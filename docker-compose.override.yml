@@ -1,0 +1,10 @@
+# Dev loop: the containers run the code from this folder (read-only), so edits need no rebuild.
+# The API rereads files on every request; after editing bin/ or src/, run `docker compose restart worker`.
+services:
+  app:
+    volumes: &code
+      - ./public:/app/public:ro
+      - ./src:/app/src:ro
+      - ./bin:/app/bin:ro
+  worker:
+    volumes: *code

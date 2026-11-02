@@ -6,9 +6,9 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 0. Dev loop (0–3 min)
 
-- [ ] `composer install`
-- [ ] Add `docker-compose.override.yml` that bind-mounts `./public`, `./src` and `./bin` read-only into `/app/…` for `app` and `worker`
-- [ ] `docker compose up -d --build`
+- [x] `composer install`
+- [x] Add `docker-compose.override.yml` that bind-mounts `./public`, `./src` and `./bin` read-only into `/app/…` for `app` and `worker`
+- [x] `docker compose up -d --build`
 
 **Check:** `curl -s localhost:8080/health` → `{"status":"ok"}`. `/test` runs and is red with `Tests: 7, Assertions: 0, Errors: 7` (two stubs and the missing `Outcome` class).
 
@@ -83,3 +83,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 | Stage | Finished | Done / cut |
 |---|---|---|
+| 0. Dev loop | 15:34 | done: `vendor/` (PHPUnit 11.5.57), override with read-only mounts, stack up; `/health` ok, unit red with 7 errors as expected |
