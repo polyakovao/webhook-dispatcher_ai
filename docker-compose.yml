@@ -17,6 +17,8 @@ services:
     build: .
     command: ["php", "bin/worker.php"]
     environment: *app-env
+    restart: unless-stopped   # it exits on a DB error, and Docker starts it again
+    stop_grace_period: 15s    # longer than the 10 s HTTP timeout, so a delivery in flight can finish
     depends_on:
       db:
         condition: service_healthy

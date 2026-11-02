@@ -88,6 +88,7 @@ check "signature = HMAC(secret, ts.body)" ok "$(docker compose exec -T worker ph
         }
     }
     echo $out;' "$ok")"
+check "content-type = application/json"   application/json "$(requests | jq -r --arg id "$ok" '.[] | select(.headers["x-webhook-id"] == $id) | .headers["content-type"]')"
 
 echo "== retries (S2, S4)"
 sql "UPDATE events SET next_attempt_at = now() WHERE id = '$flaky'" >/dev/null # skip the backoff wait

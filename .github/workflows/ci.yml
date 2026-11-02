@@ -7,6 +7,9 @@ on:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # push the image to GHCR
     steps:
       - uses: actions/checkout@v4
 
@@ -21,4 +24,22 @@ jobs:
       - name: Build image
         run: docker build -t webhook-dispatcher:${{ github.sha }} .
 
-      # TODO(candidate): scan the image, push to a registry, deploy to your target.
+      # Trivy (Apache-2.0), pinned to the v0.36.0 commit: fail on critical vulnerabilities that have a fix.
+      - name: Scan image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: webhook-dispatcher:${{ github.sha }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+      # No deploy target was given: main publishes the image, and the local compose stack is the demo.
+      - name: Push to GHCR
+        if: github.ref == 'refs/heads/main'
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+        run: |
+          echo "$TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker tag webhook-dispatcher:${{ github.sha }} "$IMAGE"
+          docker push "$IMAGE"

@@ -3,7 +3,7 @@
 | Layer | What it proves | Needs | Command | Time |
 |---|---|---|---|---|
 | Unit | pure functions: `Backoff`, `Signer`, `Outcome` | `composer install` | `vendor/bin/phpunit` | < 1 s |
-| Functional | the API over HTTP (202, 400, 500, payload stored as sent) and the worker as a process (refuses to start without a secret) | the stack, for the API tests | `vendor/bin/phpunit --testsuite functional` | ~1 s |
+| Functional | the API over HTTP (202, 400, 500, payload stored as sent, `/metrics`, replay) and the worker as a process (refuses to start without a secret) | the stack, for the API tests | `vendor/bin/phpunit --testsuite functional` | ~1 s |
 | End-to-end | the whole flow: API → DB → worker → receiver, retries, dead after 8, signature, two workers | the stack and `jq` | `tests/e2e.sh --workers 2` | ~20 s |
 
 In Claude Code, `/test`, `/test functional`, `/test e2e` and `/test all` run the same commands.
@@ -22,7 +22,7 @@ Runs unit, then builds and starts the stack (`docker compose up -d --build --wai
 composer install                            # once
 vendor/bin/phpunit                          # OK (7 tests, 19 assertions)
 docker compose up -d --build
-vendor/bin/phpunit --testsuite functional   # OK (4 tests, 26 assertions)
+vendor/bin/phpunit --testsuite functional   # OK (7 tests, 46 assertions)
 tests/e2e.sh --workers 2                    # ALL PASS
 ```
 
