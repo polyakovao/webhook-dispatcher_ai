@@ -29,9 +29,9 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 3. POST /events (15–20 min) · M1, M2
 
-- [ ] Decode the body with `json_decode($body)` so that objects stay objects (`{}` must not turn into `[]`)
-- [ ] Validate per M2 → `400 {"error": …}`; otherwise `INSERT … RETURNING id` → `202 {"id": …}`
-- [ ] Turn unhandled exceptions into `500 {"error": "internal error"}`, never a 200 with a stack trace
+- [x] Decode the body with `json_decode($body)` so that objects stay objects (`{}` must not turn into `[]`)
+- [x] Validate per M2 → `400 {"error": …}`; otherwise `INSERT … RETURNING id` → `202 {"id": …}`
+- [x] Turn unhandled exceptions into `500 {"error": "internal error"}`, never a 200 with a stack trace
 
 **Check:** `/test functional`: the three `ApiTest` tests pass (`WorkerTest` stays red until Stage 4).
 
@@ -86,3 +86,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 | 0. Dev loop | 15:34 | done: `vendor/` (PHPUnit 11.5.57), override with read-only mounts, stack up; `/health` ok, unit red with 7 errors as expected |
 | 1. Design note | 15:55 | done: PRD §6 answered (AI allowed, no deploy target, at-least-once ok, formula over `Retry-After`, tenant `default`); `NOTES.md` has a line for each of M1–M4, S1–S6 |
 | 2. Unit tests | 16:12 | done: `Signer`, `Backoff`, `Outcome` (3xx → `dead`); `OK (7 tests, 19 assertions)` on PHP 8.5, same results on the image's 8.3 |
+| 3. POST /events | 16:24 | done: decode to objects, M2 validation → 400, `INSERT … RETURNING id` → 202, exception handler → 500 with the trace in the log; `ApiTest` 3/3 green, `WorkerTest` red until Stage 4 |

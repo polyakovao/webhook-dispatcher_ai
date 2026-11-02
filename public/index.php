@@ -8,6 +8,13 @@ use App\Db;
 
 header('Content-Type: application/json');
 
+// Anything uncaught answers 500 without details (display_errors is on in the image); the trace goes to the log.
+set_exception_handler(function (Throwable $e): void {
+    error_log((string) $e);
+    http_response_code(500);
+    echo json_encode(['error' => 'internal error']);
+});
+
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -24,9 +31,30 @@ if ($method === 'GET' && $path === '/health') {
 
 // Body: {"url": "...", "type": "order.created", "payload": {...}}
 if ($method === 'POST' && $path === '/events') {
-    // TODO(candidate): validate input, insert into `events`, return 202 {"id": "<uuid>"}.
-    http_response_code(501);
-    echo json_encode(['error' => 'not implemented']);
+    // Decode to objects, so a payload of {} is stored as {}, not [].
+    $event = json_decode(file_get_contents('php://input'));
+    $url = $event->url ?? null;
+    $type = $event->type ?? null;
+    $payload = $event->payload ?? null;
+
+    $error = match (true) {
+        !$event instanceof stdClass => 'body must be a JSON object',
+        !is_string($url) || !preg_match('#^https?://#i', $url) || !filter_var($url, FILTER_VALIDATE_URL)
+            => 'url must be an absolute http or https URL',
+        !is_string($type) || $type === '' => 'type must be a non-empty string',
+        !$payload instanceof stdClass => 'payload must be a JSON object',
+        default => null,
+    };
+    if ($error !== null) {
+        http_response_code(400);
+        echo json_encode(['error' => $error]);
+        exit;
+    }
+
+    $stmt = Db::pdo()->prepare('INSERT INTO events (target_url, event_type, payload) VALUES (?, ?, ?) RETURNING id');
+    $stmt->execute([$url, $type, json_encode($payload)]);
+    http_response_code(202);
+    echo json_encode(['id' => $stmt->fetchColumn()]);
     exit;
 }
 
