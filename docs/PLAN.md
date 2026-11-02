@@ -14,8 +14,8 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 1. Design note (3–10 min)
 
-- [ ] Ask the interviewer the open questions in PRD §6, AI tools first
-- [ ] Draft `NOTES.md`, one page at most: storage, claiming, retries, and failure modes (worker crash, slow receiver, DB down, missing secret)
+- [x] Ask the interviewer the open questions in PRD §6, AI tools first
+- [x] Draft `NOTES.md`, one page at most: storage, claiming, retries, and failure modes (worker crash, slow receiver, DB down, missing secret)
 
 **Check:** every Must and Should ID in the PRD has a line in `NOTES.md` saying how it will be done.
 
@@ -84,3 +84,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 | Stage | Finished | Done / cut |
 |---|---|---|
 | 0. Dev loop | 15:34 | done: `vendor/` (PHPUnit 11.5.57), override with read-only mounts, stack up; `/health` ok, unit red with 7 errors as expected |
+| 1. Design note | 15:55 | done: PRD §6 answered (AI allowed, no deploy target, at-least-once ok, formula over `Retry-After`, tenant `default`); `NOTES.md` has a line for each of M1–M4, S1–S6 |
