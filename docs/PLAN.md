@@ -21,9 +21,9 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 2. Lock the spec with unit tests (10–15 min) · S1, S2, S3, S6
 
-- [ ] `src/Signer.php`, `src/Backoff.php`: implement them per their docblocks
-- [ ] `src/Outcome.php`: `Outcome::status(int $httpCode, int $attempt): string`, with `MAX_ATTEMPTS = 8`
-- [ ] Add `.phpunit.result.cache` to `.gitignore`
+- [x] `src/Signer.php`, `src/Backoff.php`: implement them per their docblocks
+- [x] `src/Outcome.php`: `Outcome::status(int $httpCode, int $attempt): string`, with `MAX_ATTEMPTS = 8`
+- [x] Add `.phpunit.result.cache` to `.gitignore`
 
 **Check:** `/test` → `OK (7 tests, 19 assertions)`.
 
@@ -85,3 +85,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 |---|---|---|
 | 0. Dev loop | 15:34 | done: `vendor/` (PHPUnit 11.5.57), override with read-only mounts, stack up; `/health` ok, unit red with 7 errors as expected |
 | 1. Design note | 15:55 | done: PRD §6 answered (AI allowed, no deploy target, at-least-once ok, formula over `Retry-After`, tenant `default`); `NOTES.md` has a line for each of M1–M4, S1–S6 |
+| 2. Unit tests | 16:12 | done: `Signer`, `Backoff`, `Outcome` (3xx → `dead`); `OK (7 tests, 19 assertions)` on PHP 8.5, same results on the image's 8.3 |

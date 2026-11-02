@@ -17,11 +17,11 @@ final class Backoff
      * use mt_rand() / (mt_getrandmax() + 1).
      *
      *   delay = min(60 * 2^(attempt-1), 21600) * (0.5 + rand)
-     *
-     * TODO(candidate): implement.
      */
     public static function seconds(int $attempt, ?float $rand = null): float
     {
-        throw new \RuntimeException('TODO: implement Backoff::seconds');
+        $rand ??= mt_rand() / (mt_getrandmax() + 1);
+
+        return min(self::BASE_DELAY_SECONDS * 2 ** ($attempt - 1), self::MAX_DELAY_SECONDS) * (0.5 + $rand);
     }
 }
