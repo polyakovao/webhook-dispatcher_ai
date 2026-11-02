@@ -37,12 +37,12 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 4. Worker (20–35 min) · M3, S1–S4
 
-- [ ] Exit at start when `WEBHOOK_SECRET` is empty
-- [ ] Claim one due event with the SQL from PRD decision 2
-- [ ] POST `{"id", "type", "payload", "created_at"}` with the three `X-Webhook-*` headers and a 10 s timeout; `curl_exec()` returning `false` → code 0
-- [ ] `Outcome::status()` and `Backoff::seconds()` → `UPDATE status, attempts, last_error, next_attempt_at, updated_at`
-- [ ] Idle → `sleep(1)`. One log line per delivery: `id status attempts error`
-- [ ] `docker compose restart worker`
+- [x] Exit at start when `WEBHOOK_SECRET` is empty
+- [x] Claim one due event with the SQL from PRD decision 2
+- [x] POST `{"id", "type", "payload", "created_at"}` with the three `X-Webhook-*` headers and a 10 s timeout; `curl_exec()` returning `false` → code 0
+- [x] `Outcome::status()` and `Backoff::seconds()` → `UPDATE status, attempts, last_error, next_attempt_at, updated_at`
+- [x] Idle → `sleep(1)`. One log line per delivery: `id status attempts error`
+- [x] `docker compose restart worker`
 
 **Check:** `/test functional` and `/test e2e` are all green.
 
@@ -87,3 +87,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 | 1. Design note | 15:55 | done: PRD §6 answered (AI allowed, no deploy target, at-least-once ok, formula over `Retry-After`, tenant `default`); `NOTES.md` has a line for each of M1–M4, S1–S6 |
 | 2. Unit tests | 16:12 | done: `Signer`, `Backoff`, `Outcome` (3xx → `dead`); `OK (7 tests, 19 assertions)` on PHP 8.5, same results on the image's 8.3 |
 | 3. POST /events | 16:24 | done: decode to objects, M2 validation → 400, `INSERT … RETURNING id` → 202, exception handler → 500 with the trace in the log; `ApiTest` 3/3 green, `WorkerTest` red until Stage 4 |
+| 4. Worker | 16:28 | done: claim (PRD decision 2), signed POST with a 10 s timeout, `Outcome` + `Backoff` → `UPDATE`, a log line per delivery; `Content-Type: application/json` added to PRD S3 and as an e2e check; functional `OK (4 tests, 26 assertions)`, e2e `ALL PASS` |
