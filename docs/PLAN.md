@@ -54,10 +54,10 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 6. Container, CI, deploy (40–50 min) · Deliverable 3, X6
 
-- [ ] `worker` in compose: `restart: unless-stopped` (it exits on DB errors) and `stop_grace_period: 15s` (longer than the 10 s HTTP timeout)
-- [ ] Commit `composer.lock`, so that the image and CI install the same versions
-- [ ] CI keeps PHPUnit and the image build. Add an image scan and a push to GHCR on `main`; name each new action or tool and its license before adding it
-- [ ] Deploy only if the interviewer gave a target; otherwise the local demo is the deploy
+- [x] `worker` in compose: `restart: unless-stopped` (it exits on DB errors) and `stop_grace_period: 15s` (longer than the 10 s HTTP timeout)
+- [x] Commit `composer.lock`, so that the image and CI install the same versions
+- [x] CI keeps PHPUnit and the image build. Add an image scan and a push to GHCR on `main`; name each new action or tool and its license before adding it
+- [x] Deploy only if the interviewer gave a target; otherwise the local demo is the deploy
 
 **Check:** `docker build .` succeeds locally. CI is green on GitHub after the push, which needs "ok, go".
 
@@ -89,3 +89,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 | 3. POST /events | 16:24 | done: decode to objects, M2 validation → 400, `INSERT … RETURNING id` → 202, exception handler → 500 with the trace in the log; `ApiTest` 3/3 green, `WorkerTest` red until Stage 4 |
 | 4. Worker | 16:28 | done: claim (PRD decision 2), signed POST with a 10 s timeout, `Outcome` + `Backoff` → `UPDATE`, a log line per delivery; `Content-Type: application/json` added to PRD S3 and as an e2e check; functional `OK (4 tests, 26 assertions)`, e2e `ALL PASS` |
 | 5. Two workers | 16:34 | done: e2e `--workers 2` `ALL PASS` (`distinct event ids 20`), but one worker took all 20; a manual run of 1000 events split 459/541 with 1000 distinct ids |
+| 6. Container, CI | 16:53 | done: worker `restart: unless-stopped` (checked by stopping the DB) and `stop_grace_period: 15s`; `composer.lock`; CI scans with Trivy (Apache-2.0, pinned to the v0.36.0 commit) and pushes to GHCR on `main`; no deploy target, so the local stack is the demo; `docker build` ok, `run-all.sh` `ALL GREEN`; CI on GitHub waits for the push |
