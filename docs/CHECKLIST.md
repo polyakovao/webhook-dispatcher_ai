@@ -22,7 +22,7 @@ Paths are relative to the project root: the folder with `docker-compose.yml` (`p
 | Layer | Command | Green | Needs |
 |---|---|---|---|
 | Unit | `vendor/bin/phpunit` | `OK (7 tests, 19 assertions)` | `vendor/` |
-| Functional | `vendor/bin/phpunit --testsuite functional` | `OK (4 tests, 26 assertions)` | the stack |
+| Functional | `vendor/bin/phpunit --testsuite functional` | `OK (7 tests, 46 assertions)` | the stack |
 | End-to-end | `tests/e2e.sh --workers 2` | `ALL PASS` | the stack, `jq` |
 | All three | `tests/run-all.sh` | `ALL GREEN in …s` | Docker, `vendor/`, `jq`; starts the stack itself |
 

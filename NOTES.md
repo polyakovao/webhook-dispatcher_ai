@@ -38,7 +38,7 @@ Postgres is the queue (the starter's `events` table, unchanged). The API (`php -
 - Backoff ignores `Retry-After` → wait `max(backoff, Retry-After)` once customers rate-limit us.
 - `php -S` → nginx + php-fpm or FrankenPHP in production.
 - `payload` is `JSONB`: the same JSON value comes out, not the same key order or whitespace.
-- Stretch, cheapest first: X1 graceful shutdown, X3 `/metrics`, X2 replay, X4 SSRF guard; X5 circuit breaker is most likely cut.
+- Stretch: X1 graceful shutdown (checked), X3 `/metrics` and X2 replay are done. **Cut:** X4 SSRF guard, because a check only when the event is accepted misses DNS rebinding; the real fix resolves, checks and pins the address (`CURLOPT_RESOLVE`) in the worker on every delivery. X5 circuit breaker: per-host failure counts with a cool-down, after X4.
 
 ## How to run
 

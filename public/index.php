@@ -58,5 +58,35 @@ if ($method === 'POST' && $path === '/events') {
     exit;
 }
 
+// Prometheus text format: events per status, with every status listed even when it is 0.
+if ($method === 'GET' && $path === '/metrics') {
+    $counts = Db::pdo()->query('SELECT status, count(*) FROM events GROUP BY status')->fetchAll(PDO::FETCH_KEY_PAIR);
+    header('Content-Type: text/plain; version=0.0.4');
+    echo "# HELP webhook_events Events by delivery status.\n# TYPE webhook_events gauge\n";
+    foreach (['pending', 'retry', 'sent', 'dead'] as $status) {
+        echo "webhook_events{status=\"$status\"} " . ($counts[$status] ?? 0) . "\n";
+    }
+    exit;
+}
+
+// A dead event goes back to pending with attempts 0, due now. The status check and the update are one statement.
+if ($method === 'POST' && preg_match('#^/events/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/replay$#i', $path, $match)) {
+    $stmt = Db::pdo()->prepare(<<<'SQL'
+        UPDATE events SET status = 'pending', attempts = 0, last_error = NULL, next_attempt_at = now(), updated_at = now()
+        WHERE id = ? AND status = 'dead'
+        RETURNING id
+        SQL);
+    $stmt->execute([$match[1]]);
+    $id = $stmt->fetchColumn();
+    if ($id === false) {
+        http_response_code(404);
+        echo json_encode(['error' => 'no dead event with this id']);
+        exit;
+    }
+    http_response_code(202);
+    echo json_encode(['id' => $id]);
+    exit;
+}
+
 http_response_code(404);
 echo json_encode(['error' => 'not found']);

@@ -63,9 +63,9 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 7. Stretch (until 55 min) · cheapest first
 
-- [ ] X1 graceful shutdown: mostly there already (pcntl handlers plus `stop_grace_period`)
-- [ ] X3 `GET /metrics`
-- [ ] X2 replay endpoint
+- [x] X1 graceful shutdown: mostly there already (pcntl handlers plus `stop_grace_period`)
+- [x] X3 `GET /metrics`
+- [x] X2 replay endpoint
 - [ ] X4 SSRF guard
 - [ ] X5 circuit breaker: most likely a "next step" in `NOTES.md`
 
@@ -90,3 +90,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 | 4. Worker | 16:28 | done: claim (PRD decision 2), signed POST with a 10 s timeout, `Outcome` + `Backoff` → `UPDATE`, a log line per delivery; `Content-Type: application/json` added to PRD S3 and as an e2e check; functional `OK (4 tests, 26 assertions)`, e2e `ALL PASS` |
 | 5. Two workers | 16:34 | done: e2e `--workers 2` `ALL PASS` (`distinct event ids 20`), but one worker took all 20; a manual run of 1000 events split 459/541 with 1000 distinct ids |
 | 6. Container, CI | 16:53 | done: worker `restart: unless-stopped` (checked by stopping the DB) and `stop_grace_period: 15s`; `composer.lock`; CI scans with Trivy (Apache-2.0, pinned to the v0.36.0 commit) and pushes to GHCR on `main`; no deploy target, so the local stack is the demo; `docker build` ok, `run-all.sh` `ALL GREEN`; CI on GitHub waits for the push |
+| 7. Stretch | 17:14 | done: X1 checked (stop during `/slow` took 10 s, the row was updated), X3 `/metrics`, X2 replay, with `MetricsAndReplayTest`; CI for Stage 6 green on GitHub; `run-all.sh` `ALL GREEN`. Cut: X4 SSRF guard, X5 circuit breaker (reasons in `NOTES.md`) |

@@ -21,7 +21,7 @@ Run every command from the project root (the folder with `composer.json`) and sp
 
 1. The API tests need the stack: check it as in e2e step 1. The worker test needs nothing.
 2. `vendor/bin/phpunit --testsuite functional`
-3. Report the summary line (`OK (4 tests, 26 assertions)`), or each failing test's name with its first failure message.
+3. Report the summary line (`OK (7 tests, 46 assertions)`), or each failing test's name with its first failure message.
 
 ## e2e
 
