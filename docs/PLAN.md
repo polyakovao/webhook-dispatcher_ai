@@ -48,7 +48,7 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 
 ## Stage 5. Two workers (35–40 min) · S5
 
-- [ ] Nothing to build if Stage 4 used the PRD claim; this stage proves it
+- [x] Nothing to build if Stage 4 used the PRD claim; this stage proves it
 
 **Check:** `/test e2e --workers 2` → `ALL PASS`, including `distinct event ids 20`.
 
@@ -88,3 +88,4 @@ Time boxes follow BRIEF's 60-minute plan. If a stage runs over, cut scope and wr
 | 2. Unit tests | 16:12 | done: `Signer`, `Backoff`, `Outcome` (3xx → `dead`); `OK (7 tests, 19 assertions)` on PHP 8.5, same results on the image's 8.3 |
 | 3. POST /events | 16:24 | done: decode to objects, M2 validation → 400, `INSERT … RETURNING id` → 202, exception handler → 500 with the trace in the log; `ApiTest` 3/3 green, `WorkerTest` red until Stage 4 |
 | 4. Worker | 16:28 | done: claim (PRD decision 2), signed POST with a 10 s timeout, `Outcome` + `Backoff` → `UPDATE`, a log line per delivery; `Content-Type: application/json` added to PRD S3 and as an e2e check; functional `OK (4 tests, 26 assertions)`, e2e `ALL PASS` |
+| 5. Two workers | 16:34 | done: e2e `--workers 2` `ALL PASS` (`distinct event ids 20`), but one worker took all 20; a manual run of 1000 events split 459/541 with 1000 distinct ids |
