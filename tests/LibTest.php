@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use App\Backoff;
+use App\Outcome;
 use App\Signer;
 use PHPUnit\Framework\TestCase;
 
@@ -40,5 +41,22 @@ final class LibTest extends TestCase
             'b4299661e5387b192e6a17c961991dce11e3adb10aabc368d96f3b7a148387e3',
             Signer::sign('whsec_test', '1700000000', $body)
         );
+    }
+
+    public function testOutcomeFollowsTheSpecTable(): void
+    {
+        $this->assertSame('sent', Outcome::status(201, 1));
+        foreach ([0, 408, 429, 500, 503] as $code) {
+            $this->assertSame('retry', Outcome::status($code, 1), "HTTP $code");
+        }
+        foreach ([400, 404, 410] as $code) {
+            $this->assertSame('dead', Outcome::status($code, 1), "HTTP $code");
+        }
+    }
+
+    public function testOutcomeGivesUpAfterEightFailedAttempts(): void
+    {
+        $this->assertSame('retry', Outcome::status(500, 7));
+        $this->assertSame('dead', Outcome::status(500, 8));
     }
 }

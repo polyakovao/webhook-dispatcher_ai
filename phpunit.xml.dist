@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php" colors="true" failOnWarning="true">
+<phpunit bootstrap="vendor/autoload.php" colors="true" failOnWarning="true" defaultTestSuite="unit">
     <testsuites>
         <testsuite name="unit">
             <directory>tests</directory>
+            <exclude>tests/Functional</exclude>
+        </testsuite>
+        <testsuite name="functional">
+            <directory>tests/Functional</directory>
         </testsuite>
     </testsuites>
 </phpunit>
