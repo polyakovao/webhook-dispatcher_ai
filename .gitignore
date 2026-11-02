@@ -1,0 +1,20 @@
+# dependencies / build output
+node_modules/
+__pycache__/
+.pytest_cache/
+.venv/
+vendor/
+**/bin/Debug/
+**/bin/Release/
+obj/
+/server
+*.exe
+
+# local config and secrets
+.env
+.env.*
+
+# editors / OS
+.idea/
+.vscode/
+.DS_Store

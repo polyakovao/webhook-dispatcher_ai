@@ -1,0 +1,24 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer
+
+      - run: composer install --no-interaction --prefer-dist
+      - run: vendor/bin/phpunit
+
+      - name: Build image
+        run: docker build -t webhook-dispatcher:${{ github.sha }} .
+
+      # TODO(candidate): scan the image, push to a registry, deploy to your target.

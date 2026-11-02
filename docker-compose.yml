@@ -1,0 +1,47 @@
+services:
+  # HTTP API
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment: &app-env
+      DATABASE_URL: postgres://dispatcher:dispatcher@db:5432/dispatcher
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-whsec_dev_only}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Delivery worker: a separate process in PHP. Scale it with
+  #   docker compose up --scale worker=2
+  worker:
+    build: .
+    command: ["php", "bin/worker.php"]
+    environment: *app-env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dispatcher
+      POSTGRES_PASSWORD: dispatcher   # local dev only
+      POSTGRES_DB: dispatcher
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dispatcher -d dispatcher"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  # Simulated customer endpoints, see BRIEF.md for the paths.
+  receiver:
+    image: node:22-alpine
+    command: ["node", "/app/server.cjs"]
+    volumes:
+      - ./receiver:/app:ro
+    ports:
+      - "9000:9000"
